@@ -1,9 +1,6 @@
 .DS_Store
 fastp
 
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo

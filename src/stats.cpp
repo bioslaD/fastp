@@ -220,7 +220,7 @@ void Stats::statRead(Read* r) {
     if(mBufLen < len) {
         extendBuffer(max(len + 100, (int)(len * 1.5)));
     }
-    const char* seqstr = r->mSeq.mStr.c_str();
+    const char* seqstr = r->mSeq.str().c_str();
     const char* qualstr = r->mQuality.c_str();
 
     int kmer = 0;
@@ -296,7 +296,7 @@ void Stats::statRead(Read* r) {
             for(int s=0; s<5; s++) {
                 int step = steps[s];
                 for(int i=0; i<len-step; i++) {
-                    string seq = r->mSeq.mStr.substr(i, step);
+                    string seq = r->mSeq.str().substr(i, step);
                     if(mOverRepSeq.count(seq)>0) {
                         mOverRepSeq[seq]++;
                         for(int p = i; p < seq.length() + i && p < mEvaluatedSeqLen; p++) {

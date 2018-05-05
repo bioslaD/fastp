@@ -17,8 +17,8 @@ OverlapResult OverlapAnalysis::analyze(Sequence& r1, Sequence& r2) {
     int len1 = r1.length();
     int len2 = rcr2.length();
     // use the pointer directly for speed
-    const char* str1 = r1.mStr.c_str();
-    const char* str2 = rcr2.mStr.c_str();
+    const char* str1 = r1.str().c_str();
+    const char* str2 = rcr2.str().c_str();
 
     int limit_distance = 5;
     int overlap_require = 30;

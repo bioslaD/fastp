@@ -18,9 +18,13 @@ public:
 
     Sequence operator~();
 
+    string& str(){
+        return mStr;
+    }
+
     static bool test();
 
-public:
+private:
     string mStr;
 };
 

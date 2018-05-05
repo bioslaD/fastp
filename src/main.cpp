@@ -9,22 +9,24 @@
 #include "processor.h"
 #include "evaluator.h"
 
+extern "C" {
+struct CArgs
+{
+    int argc;
+    char** argv;
+};
+
+CArgs rt_cArgs();
+}
+
+
 string command;
 
-int main(int argc, char* argv[]){
-    // display version info if no argument is given
-    if(argc == 1) {
-        cout << "fastp: an ultra-fast all-in-one FASTQ preprocessor" << endl << "version " << FASTP_VER << endl;
-    }
-    if (argc == 2 && strcmp(argv[1], "test")==0){
-        UnitTest tester;
-        tester.run();
-        return 0;
-    }
-    if (argc == 2 && (strcmp(argv[1], "-v")==0 || strcmp(argv[1], "--version")==0)){
-        cout << "fastp: an ultra-fast all-in-one FASTQ preprocessor" << endl << "version " << FASTP_VER << endl;
-        return 0;
-    }
+int cppmain(){
+    struct CArgs cargs = rt_cArgs();
+    int argc = cargs.argc;
+    char** argv = cargs.argv;
+
     cmdline::parser cmd;
     // input/output
     cmd.add<string>("in1", 'i', "read1 input file name", true, "");

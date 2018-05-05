@@ -52,7 +52,7 @@ Read::Read(Read &r) {
 
 void Read::print(){
 	std::cout << mName << endl;
-	std::cout << mSeq.mStr << endl;
+	std::cout << mSeq.str() << endl;
 	std::cout << mStrand << endl;
 	if(mHasQuality)
 		std::cout << mQuality << endl;
@@ -60,7 +60,7 @@ void Read::print(){
 
 void Read::printFile(ofstream& file){
 	file << mName << endl;
-	file << mSeq.mStr << endl;
+	file << mSeq.str() << endl;
 	file << mStrand << endl;
 	if(mHasQuality)
 		file << mQuality << endl;
@@ -77,13 +77,13 @@ Read* Read::reverseComplement(){
 void Read::resize(int len) {
 	if(len > length() || len<0)
 		return ;
-	mSeq.mStr.resize(len);
+	mSeq.str().resize(len);
 	mQuality.resize(len);
 }
    
 void Read::trimFront(int len){
 	len = min(length()-1, len);
-	mSeq.mStr = mSeq.mStr.substr(len, mSeq.mStr.length() - len);
+	mSeq.str() = mSeq.str().substr(len, mSeq.str().length() - len);
 	mQuality = mQuality.substr(len, mQuality.length() - len);
 }
 
@@ -128,7 +128,7 @@ int Read::length(){
 }
 
 string Read::toString() {
-	return mName + "\n" + mSeq.mStr + "\n" + mStrand + "\n" + mQuality + "\n";
+	return mName + "\n" + mSeq.str() + "\n" + mStrand + "\n" + mQuality + "\n";
 }
 
 bool Read::test(){
@@ -161,8 +161,8 @@ Read* ReadPair::fastMerge(){
 	int len1 = mLeft->length();
 	int len2 = rcRight->length();
 	// use the pointer directly for speed
-	const char* str1 = mLeft->mSeq.mStr.c_str();
-	const char* str2 = rcRight->mSeq.mStr.c_str();
+	const char* str1 = mLeft->mSeq.str().c_str();
+	const char* str2 = rcRight->mSeq.str().c_str();
 	const char* qual1 = mLeft->mQuality.c_str();
 	const char* qual2 = rcRight->mQuality.c_str();
 
@@ -205,7 +205,7 @@ Read* ReadPair::fastMerge(){
 		stringstream ss;
 		ss << mLeft->mName << " merged offset:" << offset << " overlap:" << olen << " diff:" << diff;
 		string mergedName = ss.str();
-		string mergedSeq = mLeft->mSeq.mStr.substr(0, offset) + rcRight->mSeq.mStr;
+		string mergedSeq = mLeft->mSeq.str().substr(0, offset) + rcRight->mSeq.str();
 		string mergedQual = mLeft->mQuality.substr(0, offset) + rcRight->mQuality;
 		// quality adjuction and correction for low qual diff
 		for(int i=0;i<olen;i++){
@@ -245,7 +245,7 @@ bool ReadPair::test(){
 	if(merged == NULL)
 		return false;
 
-	if(merged->mSeq.mStr != "TTTTTTCTCTTGGACTCTAACACTGTTTTTTCTTATGAAAACACAGGAGTGATGACTAGTTGAGTGCATTCTTATGAGACTCATAGTCATTCTATGATGTAGTTTTTT")
+	if(merged->mSeq.str() != "TTTTTTCTCTTGGACTCTAACACTGTTTTTTCTTATGAAAACACAGGAGTGATGACTAGTTGAGTGCATTCTTATGAGACTCATAGTCATTCTATGATGTAGTTTTTT")
 		return false;
 
 	return true;

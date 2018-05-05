@@ -15,8 +15,8 @@ bool AdapterTrimmer::trimByOverlapAnalysis(Read* r1, Read* r2, FilterResult* fr)
 bool AdapterTrimmer::trimByOverlapAnalysis(Read* r1, Read* r2, FilterResult* fr, OverlapResult ov) {
     int ol = ov.overlap_len;
     if(ov.diff<=5 && ov.overlapped && ov.offset < 0 && ol > r1->length()/3) {
-        string adapter1 = r1->mSeq.mStr.substr(ol, r1->length() - ol);
-        string adapter2 = r2->mSeq.mStr.substr(ol, r2->length() - ol);
+        string adapter1 = r1->mSeq.str().substr(ol, r1->length() - ol);
+        string adapter2 = r2->mSeq.str().substr(ol, r2->length() - ol);
 
         if(_DEBUG) {
             cout << adapter1 << endl;
@@ -27,9 +27,9 @@ bool AdapterTrimmer::trimByOverlapAnalysis(Read* r1, Read* r2, FilterResult* fr,
             cout <<endl;
         }
 
-        r1->mSeq.mStr = r1->mSeq.mStr.substr(0, ol);
+        r1->mSeq.str() = r1->mSeq.str().substr(0, ol);
         r1->mQuality = r1->mQuality.substr(0, ol);
-        r2->mSeq.mStr = r2->mSeq.mStr.substr(0, ol);
+        r2->mSeq.str() = r2->mSeq.str().substr(0, ol);
         r2->mQuality = r2->mQuality.substr(0, ol);
 
         fr->addAdapterTrimmed(adapter1, adapter2);
@@ -46,7 +46,7 @@ bool AdapterTrimmer::trimBySequence(Read* r, FilterResult* fr, string& adapterse
     int alen = adapterseq.length();
 
     const char* adata = adapterseq.c_str();
-    const char* rdata = r->mSeq.mStr.c_str();
+    const char* rdata = r->mSeq.str().c_str();
 
     if(alen < matchReq)
         return false;
@@ -75,8 +75,8 @@ bool AdapterTrimmer::trimBySequence(Read* r, FilterResult* fr, string& adapterse
     }
 
     if(found) {
-        string adapter = r->mSeq.mStr.substr(pos, rlen-pos);
-        r->mSeq.mStr = r->mSeq.mStr.substr(0, pos);
+        string adapter = r->mSeq.str().substr(pos, rlen-pos);
+        r->mSeq.str() = r->mSeq.str().substr(0, pos);
         r->mQuality = r->mQuality.substr(0, pos);
         if(fr) {
             fr->addAdapterTrimmed(adapter, isR2);
@@ -94,5 +94,5 @@ bool AdapterTrimmer::test() {
         "///EEEEEEEEEEEEEEEEEEEEEEEEEE////EEEEEEEEEEEEE////E////E");
     string adapter = "TTTTCCACGGGGATACTACTG";
     bool trimmed = AdapterTrimmer::trimBySequence(&r, NULL, adapter);
-    return r.mSeq.mStr == "TTTTAACCCCCCCCCCCCCCCCCCCCCCCCCCCCAATTTTAAAA";
+    return r.mSeq.str() == "TTTTAACCCCCCCCCCCCCCCCCCCCCCCCCCCCAATTTTAAAA";
 }
