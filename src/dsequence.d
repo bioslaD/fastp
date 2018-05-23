@@ -3,7 +3,6 @@ import std.stdio;
 
 class Sequence
 {
-public:
     string mStr;
 
     this()
@@ -55,17 +54,19 @@ public:
     }
 
 /*
-Sequence Sequence::operator~(){
+ * Operator overload
+ *
+ */
+  Sequence opUnary(string s) () if (s == "~"){
     return reverseComplement();
-}
-*/
+  }
 }
 
 unittest
 {
     auto s = new Sequence("AAAATTTTCCCCGGGG");
-    // TODO Implement operator Sequence rc = ~s;
-    auto rc = s.reverseComplement;
+    Sequence rc = ~s;
+    // auto rc = s.reverseComplement;
     assert(s.mStr == "AAAATTTTCCCCGGGG", "Failed in reverseComplement() expect AAAATTTTCCCCGGGG, but get " ~ s.mStr);
     assert(rc.mStr == "CCCCGGGGAAAATTTT", "Failed in reverseComplement() expect CCCCGGGGAAAATTTT, but get " ~ rc.mStr);
 }
