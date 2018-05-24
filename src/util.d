@@ -2,13 +2,15 @@ import std.stdio;
 import std.string;
 import std.array;
 import std.algorithm;
-import std.algorithm.iteration : map;
-import std.algorithm.mutation : copy;
-import std.array : appender;
+// import std.algorithm.iteration : map;
+// import std.algorithm.mutation : copy;
+// import std.array : appender;
 import core.stdc.stdlib: exit;
 import std.ascii: toLower, isAlpha;
-import std.path: dirName, isDir;
-import std.file: exists;
+// import std.path: dirName, isDir;
+import std.path;
+// import std.file: exists;
+import std.file;
 
 char complement(char base) {
     switch(base){
@@ -108,17 +110,18 @@ string replace(const ref string str, const ref string src, const ref string dest
 }
 
 /**
- * This function uses `char` (8bit) instead of `dchar` (32bit)
- * So it expects input file to be ascii.
+ * This function works with unicode on DMD 2.080.0
  *
  */
 
 string reverse(const ref string str) {
-    char[] ret = new char[str.length];
-    for(int pos=0; pos<str.length; pos++) {
-        ret[pos] = str[str.length - pos - 1];
-    }
-    return cast(string)ret;
+   alias rev = std.algorithm.reverse;
+    // char[] ret = new char[str.length];
+    // for(int pos=0; pos<str.length; pos++) {
+    //     ret[pos] = str[str.length - pos - 1];
+    // }
+    // return cast(string)ret;
+   return rev(str.dup);
 }
 
 void check_file_valid(const ref string s) {
@@ -268,9 +271,8 @@ unittest{
   s = "aBc";
   assert("cBa" == reverse(s));
 
-  // This fails because the function does not know how to handle unicode yet.
-  s = "ư";
-  // assert("ư" == reverse(s));
+  s = "có dấu đấy";
+  assert("yấđ uấd óc" == reverse(s));
 
 }
 
