@@ -76,7 +76,7 @@ int split(const ref string str, ref string[] ret_, string sep = ",")
         }
 
         ret_ ~= tmp;
-        delete(tmp);
+        object.destroy(tmp);
     }
     return 0;
 }
@@ -236,7 +236,7 @@ unittest{
   split(spl, ret, "|");
   assert(equal(ret, ["abc", "def", "gh"]));
   writeln(ret);
-  delete(ret);
+  object.destroy(ret);
 
   writeln("Test replace");
   auto srcstr = "Test replacement test";
