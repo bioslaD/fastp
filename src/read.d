@@ -1,8 +1,8 @@
 import dsequence;
 import util;
-import std.stdio: File, writeln;
-import std.algorithm.comparison: min, max;
-import std.algorithm.mutation: reverse;
+import std.stdio: File, writeln, writefln;
+// import std.algorithm.comparison: min, max;
+import std.algorithm;
 import std.string;
 
 class Read{
@@ -73,21 +73,22 @@ class Read{
   }
   Read reverseComplement(){
     Sequence seq = ~mSeq;
-    dchar[] qual = cast(dchar[])mQuality.dup;
-    reverse(qual);
+    alias reverse = std.algorithm.mutation.reverse;
+    string qual = mQuality.dup.reverse;
+    // reverse(qual);
     string strand = (mStrand=="+") ? "-" : "+";
     Read newRead = new Read(mName, seq, strand, cast(string)qual);
     return newRead;
 
   }
   string firstIndex(){
-    size_t len = this.mName.length;
+    size_t len = mName.length;
     size_t end = len;
     if(len<5)
       return "";
     for(size_t i=len-3;i>=0;i--){
       if(mName[i]=='+')
-        end = i-1;
+        end = i;
       if(mName[i]==':'){
         return mName[i+1 .. end];
       }
@@ -153,7 +154,8 @@ unittest{
            "+",
            "AAAAA6EEEEEEEEEEEEEEEEE#EEEEEEEEEEEEEEEEE/EEEEEEEEEEEEEEEEAEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE<EEEEAEEEEEEEEEEEEEEEAEEE/EEEEEEEEEEAAEAEAAEEEAEEAA");
 	string idx = r.lastIndex();
-	return idx == "GGTCCCGA";
+    writeln("first index: ", r.firstIndex);
+	return idx == "GGTCCCGA" && r.firstIndex == "TATAGCCT";
 
   }
 
@@ -171,11 +173,11 @@ class ReadPair{
   }
   ~this(){
     if(mLeft){
-      delete mLeft;
+      mLeft.destroy;
       mLeft = null;
 	}
 	if(mRight){
-      delete mRight;
+      mRight.destroy;
       mRight = null;
 	}
 
@@ -186,6 +188,7 @@ class ReadPair{
 	Read rcRight = mRight.reverseComplement();
 	size_t len1 = mLeft.length();
 	size_t len2 = rcRight.length();
+    writefln("len1: %d, len2: %d", len1, len2);
 	// use the pointer directly for speed
 	const char* str1 = mLeft.mSeq.mStr.ptr;
 	const char* str2 = rcRight.mSeq.mStr.ptr;
@@ -230,10 +233,14 @@ class ReadPair{
 		size_t offset = len1 - olen;
 		string mergedName =  mLeft.mName ~ " merged offset:" ~
           format("%s, overlap: %s, diff: %s", offset, olen, diff);
-		auto mergedSeq = cast(dchar[])(mLeft.mSeq.mStr[0..offset] ~ rcRight.mSeq.mStr);
-		auto mergedQual = cast(dchar[])(mLeft.mQuality[0..offset] ~ rcRight.mQuality);
+        debug writefln("mleft: %d, rcRight: %d", mLeft.length, mRight.length);
+
+		auto mergedSeq = (mLeft.mSeq.mStr[0..offset] ~ rcRight.mSeq.mStr).dup;
+		auto mergedQual = (mLeft.mQuality[0..offset] ~ rcRight.mQuality).dup;
 		// quality adjuction and correction for low qual diff
 		for(size_t i=0;i<olen;i++){
+          debug writefln("offset: %d, i: %d, mergedQual length: %d, mergedSelen: %d",
+                   offset, i, mergedQual.length, mergedSeq.length);
 			if(str1[offset+i] != str2[i]){
 				if(qual1[offset+i]>='?' && qual2[i]<='0'){
 					mergedSeq[offset+i] = str1[offset+i];
@@ -244,14 +251,14 @@ class ReadPair{
 				}
 			} else {
 				// add the quality of the pair to make a high qual
-              mergedQual[offset+i] =  cast(dchar)(qual1[offset+i] + qual2[i] - 33);
+              mergedQual[offset+i] =  cast(char)(qual1[offset+i] + qual2[i] - 33);
 			}
 		}
-		delete rcRight;
+		rcRight.destroy;
 		return new Read(cast(string)mergedName, cast(string)mergedSeq, "+", cast(string)mergedQual);
 	}
 
-	delete rcRight;
+	rcRight.destroy;
 	return null;
 }
 }
@@ -268,6 +275,6 @@ unittest{
 
 	auto pair = new ReadPair(left, right);
 	Read merged = pair.fastMerge();
-	// assert(null !is merged);
-	// assert(merged.mSeq.mStr == "TTTTTTCTCTTGGACTCTAACACTGTTTTTTCTTATGAAAACACAGGAGTGATGACTAGTTGAGTGCATTCTTATGAGACTCATAGTCATTCTATGATGTAGTTTTTT");
+	assert(null !is merged);
+	assert(merged.mSeq.mStr == "TTTTTTCTCTTGGACTCTAACACTGTTTTTTCTTATGAAAACACAGGAGTGATGACTAGTTGAGTGCATTCTTATGAGACTCATAGTCATTCTATGATGTAGTTTTTT");
 }
