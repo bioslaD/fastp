@@ -1,6 +1,6 @@
 // Written in the D programming language.
 import std.stdio;
-
+///
 class Sequence
 {
   string mStr;
@@ -22,38 +22,40 @@ class Sequence
   {
     return mStr.length;
   }
-
+  /// Reverses complement
   Sequence reverseComplement(){
-    char[] str = new char[mStr.length];
-    for (size_t c = 0; c < mStr.length; c++)
+    char[] str;
+    str.length = mStr.length;
+    immutable len = mStr.length;
+    foreach (size_t c ; 0 .. length)
       {
-        char base = mStr[c];
+        char base = mStr[c]; 
         switch (base)
           {
           case 'A':
           case 'a':
-            str[mStr.length-c-1] = 'T';
+            str[len-c-1] = 'T';
             break;
           case 'T':
           case 't':
-            str[mStr.length-c-1] = 'A';
+            str[len-c-1] = 'A';
             break;
           case 'C':
           case 'c':
-            str[mStr.length-c-1] = 'G';
+            str[len-c-1] = 'G';
             break;
           case 'G':
           case 'g':
-            str[mStr.length-c-1] = 'C';
+            str[len-c-1] = 'C';
             break;
           default:
-            str[mStr.length-c-1] = 'N';
+            str[len-c-1] = 'N';
           }
       }
-    return new Sequence(str.idup);
+    return new Sequence(cast(immutable) str);
   }
 
-  /*
+  /**
    * Operator overload
    *
    */
