@@ -36,7 +36,7 @@ bool starts_with( const ref string value, const ref string starting) {
     return startsWith(value, starting) == 1;
 }
 
-bool ends_with( const ref string value, const ref string ending)
+bool ends_with( const string value, const string ending)
 {
 	if (ending.length > value.length) return false;
 
@@ -52,7 +52,7 @@ string trim(const ref string str)
  * This split function is probably never used.
  */
 
-int split(const ref string str, ref string[] ret_, string sep = ",")
+int split(const string str, ref string[] ret_, string sep = ",")
 {
     if (str.empty())
     {
@@ -88,8 +88,8 @@ int split(const ref string str, ref string[] ret_, string sep = ",")
  *
  * Returns: a new string
  */
-
-string replace(const ref string str, const ref string src, const ref string dest)
+// TODO check for efficiency of this function. It does many allocations
+string replace(const string str, const string src, const string dest)
 {
     string ret;
 
